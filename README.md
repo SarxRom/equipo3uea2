@@ -1,2 +1,2 @@
 # equipo3uea2
-repositorio para subir los archivos de codigo para la uea
+repositorio del equipo 3 para subir los archivos de codigo para la uea "Origenes y Rupturas del Arte Contemporáneo"
