@@ -1,2 +1,2 @@
 # equipo3uea2
-repositorio del equipo 3 para subir los archivos de codigo para la uea "Origenes y Rupturas del Arte Contemporáneo"
+Esta pieza se enfoca en la vanguardia dadaísta que será representada por medio de un collage con algunas  imágenes  interactivas , el cual criticara a la política  en forma de sátira. La interacción se lograra gracias a una placa de Arduino en donde estarán los botones y demás componentes para lograr la interacción deseada.
