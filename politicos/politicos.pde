@@ -1,4 +1,8 @@
 PImage[] images;//cargar imagenes
+PImage[] fondoImages; // Array para almacenar las imágenes de fondo
+int fondoIndex = 0; // Índice para la imagen de fondo actual
+int lastTime = 0; // Variable para controlar el tiempo
+int changeInterval = 10000; // Intervalo de cambio de fondo en milisegundos (1 segundo)
 PImage personajeImg1; // Variable para almacenar la imagen del primer personaje
 PImage personajeImg2; // Variable para almacenar la imagen del segundo personaje
 PImage personajeImg3; // Variable para almacenar la imagen del tercer personaje
@@ -7,9 +11,15 @@ Personaje jugador2; // Variable para almacenar al segundo personaje
 Personaje jugador3; // Variable para almacenar al tercer personaje
 
 void setup() {
-  frameRate(15);
+  frameRate(10);
   fullScreen(); // Tamaño de la ventana
   //noCursor();
+   fondoImages = new PImage[4]; // Inicializar el array de imágenes de fondo
+  fondoImages[0] = loadImage("assets/collage_1.png");
+  fondoImages[1] = loadImage("assets/collage_2.png");
+  fondoImages[2] = loadImage("assets/collage_3.png");
+  fondoImages[3] = loadImage("assets/collage_4.png");
+
   images = new PImage[5];
   images[0] = loadImage("assets/1.png");
   images[1] = loadImage("assets/1.png");
@@ -18,7 +28,7 @@ void setup() {
   images[4] = loadImage("assets/teddy_bear.png");
   // Establecer el tamaño de las imágenes
   for (int i = 0; i < images.length; i++) {
-    images[i].resize(120, 0); // Ajustar el ancho a 100 pixeles, manteniendo la proporción
+    images[i].resize(250, 0); // Ajustar el ancho a 100 pixeles, manteniendo la proporción
   }
 
 
@@ -36,7 +46,14 @@ void setup() {
 }
 
 void draw() {
-  background(220); // Fondo gris claro
+  int currentTime = millis();
+  if (currentTime - lastTime > changeInterval) {
+    fondoIndex = (fondoIndex + 1) % fondoImages.length;
+    lastTime = currentTime;
+  }
+  background(fondoImages[fondoIndex]); // Establecer el fondo actual
+
+
   // Mostrar las imágenes dispersas
   for (int i = 0; i < images.length; i++) {
     float x = random(width);
@@ -97,63 +114,63 @@ class Personaje {
   // Método para mostrar al personaje en la pantalla
   void mostrar1() { //maynez
     // Cuerpo
-    fill(255, 117, 26); // Color del cuerpo de claudia
+    fill(255, 117, 26); // Color del cuerpo de maynez
     rectMode(CENTER);
-    rect(x, y + 10, 60, 90);
+    rect(x, y + 30, 90, 120);
 
     // Brazos
     stroke(0); // Color negro
-    strokeWeight(9); // Grosor de línea
-    line(x - 15, y + 10, x - 60, y + 40); // Brazo izquierdo
-    line(x + 15, y + 10, x + 60, y + 40); // Brazo derecho
+    strokeWeight(11); // Grosor de línea
+    line(x - 35, y + 30, x - 80, y + 60); // Brazo izquierdo
+    line(x + 35, y + 30, x + 80, y + 60); // Brazo derecho
 
     // Piernas
-    line(x - 20, y + 60, x - 30, y + 90); // Pierna izquierda
-    line(x + 20, y + 60, x + 30, y + 90); // Pierna derecha
+    line(x - 40, y + 80, x - 60, y + 110); // Pierna izquierda
+    line(x + 40, y + 80, x + 60, y + 110); // Pierna derecha
 
     // Cabeza
     imageMode(CENTER);
-    image(personajeImg1, x, y - 80, 150, 150); // Muestra la imagen del personaje en su posición
+    image(personajeImg1, x, y - 80, 170, 170); // Muestra la imagen del personaje en su posición
   }
   void mostrar2() {//claudia
     // Cuerpo
     fill(153, 51, 51); // Color del cuerpo de claudia
     rectMode(CENTER);
-    rect(x, y + 10, 60, 90);
+    rect(x, y + 30, 80, 110);
 
     // Brazos
     stroke(0); // Color negro
-    strokeWeight(9); // Grosor de línea
-    line(x - 15, y + 10, x - 60, y + 40); // Brazo izquierdo
-    line(x + 15, y + 10, x + 60, y + 40); // Brazo derecho
+    strokeWeight(11); // Grosor de línea
+    line(x - 35, y + 30, x - 80, y + 60); // Brazo izquierdo
+    line(x + 35, y + 30, x + 80, y + 60); // Brazo derecho
 
     // Piernas
-    line(x - 20, y + 60, x - 30, y + 90); // Pierna izquierda
-    line(x + 20, y + 60, x + 30, y + 90); // Pierna derecha
+    line(x - 40, y + 80, x - 50, y + 110); // Pierna izquierda
+    line(x + 40, y + 80, x + 50, y + 110); // Pierna derecha
 
     // Cabeza
     imageMode(CENTER);
-    image(personajeImg2, x, y-60, 150, 150);
+    image(personajeImg2, x, y-80, 170, 170);
   }
   void mostrar3() {//xochitl
     // Cuerpo
-    fill(0, 102, 255); // Color del cuerpo de claudia
+    fill(0, 102, 255); // Color del cuerpo de xochitl
     rectMode(CENTER);
-    rect(x, y + 10, 60, 90);
+    rect(x, y + 30, 80, 110);
 
     // Brazos
     stroke(0); // Color negro
-    strokeWeight(9); // Grosor de línea
-    line(x - 15, y + 10, x - 60, y + 40); // Brazo izquierdo
-    line(x + 15, y + 10, x + 60, y + 40); // Brazo derecho
+    strokeWeight(11); // Grosor de línea
+    line(x - 35, y + 30, x - 80, y + 60); // Brazo izquierdo
+    line(x + 35, y + 30, x + 80, y + 60); // Brazo derecho
 
     // Piernas
-    line(x - 20, y + 60, x - 30, y + 90); // Pierna izquierda
-    line(x + 20, y + 60, x + 30, y + 90); // Pierna derecha
+    line(x - 40, y + 80, x - 50, y + 110); // Pierna izquierda
+    line(x + 40, y + 80, x + 50, y + 110); // Pierna derecha
 
     // Cabeza
     imageMode(CENTER);
-    image(personajeImg3, x, y - 80, 150, 150); // Muestra la imagen del personaje en su posición
+    image(personajeImg3, x, y - 90, 170, 170); // Muestra la imagen del personaje en su posición
   }
 
 
