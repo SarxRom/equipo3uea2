@@ -1,3 +1,9 @@
+import com.hamoid.*;
+
+import processing.video.*;
+Movie video;
+boolean isVideoPlaying = false;
+boolean movimientoActivo = false;
 PImage[] images;//cargar imagenes
 PImage[] fondoImages = new PImage[4]; // Array para almacenar las imágenes de fondo
 int fondoIndex = 0; // Índice para la imagen de fondo actual
@@ -29,6 +35,8 @@ void setup() {
   // Establecer el tamaño de las imágenes
   for (int i = 0; i < images.length; i++) {
     images[i].resize(250, 0); // Ajustar el ancho a 100 pixeles, manteniendo la proporción
+     video = new Movie(this, "assets/explosion.mp4");
+  video.loop();
   }
 
 
@@ -46,19 +54,21 @@ void setup() {
 }
 
 void draw() {
-  //int currentTime = millis();
-  //if (currentTime - lastTime > changeInterval) {
-    //fondoIndex = (fondoIndex + 1) % fondoImages.length;
-    //lastTime = currentTime;
-  //}
   background(fondoImages[fondoIndex]); // Establecer el fondo actual
 
 
   //Mostrar las imágenes dispersas
+  if (movimientoActivo) {
   for (int i = 0; i < images.length; i++) {
     float x = random(width);
     float y = random(height);
     image(images[i], x, y);
+  }
+  if (isVideoPlaying) {
+    image(video, 0, 0, width, height);
+  } else {
+    background(0);
+  }
   }
 
   // Muestra a todos los personajes
@@ -69,14 +79,18 @@ void draw() {
 
 void keyPressed() {
 
-  if (key == 'c') {
+  if (key == 'C') {
     fondoIndex = 0;
-  } else if (key == 'v') {
+  } else if (key == 'V') {
     fondoIndex = 1;
-  } else if (key == 'b') {
+  } else if (key == 'B') {
     fondoIndex = 2;
-  } else if (key == 'n') {
+  } else if (key == 'N') {
     fondoIndex = 3;
+  }
+  
+  if (key == 'Y') { // Tecla Y
+    movimientoActivo = !movimientoActivo; // Cambia el estado del movimiento
   }
   
   //Controla el movimiento del primer personaje utilizando las teclas de flecha
@@ -110,6 +124,15 @@ void keyPressed() {
     jugador3.mover(-5, 0); // Mueve hacia la izquierda
   } else if (key == 'l' || key == 'L') {
     jugador3.mover(5, 0); // Mueve hacia la derecha
+  }
+  // Presiona la tecla 'p' para reproducir/pausar el video
+  if (key == 'p' || key == ' ') { //ESPACIO
+    if (isVideoPlaying) {
+      video.pause();
+    } else {
+      video.play();
+    }
+    isVideoPlaying = !isVideoPlaying;
   }
 }
 
