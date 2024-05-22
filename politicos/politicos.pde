@@ -1,11 +1,6 @@
-import com.hamoid.*;
-
-import processing.video.*;
-Movie video;
-boolean isVideoPlaying = false;
 boolean movimientoActivo = false;
 PImage[] images;//cargar imagenes
-PImage[] fondoImages = new PImage[4]; // Array para almacenar las imágenes de fondo
+PImage[] fondoImages; // Array para almacenar las imágenes de fondo
 int fondoIndex = 0; // Índice para la imagen de fondo actual
 int lastTime = 0; // Variable para controlar el tiempo
 int changeInterval = 10000; // Intervalo de cambio de fondo en milisegundos (1 segundo)
@@ -20,7 +15,7 @@ void setup() {
   frameRate(10);
   fullScreen(); // Tamaño de la ventana
   //noCursor();
-  //fondoImages = new PImage[4]; // Inicializar el array de imágenes de fondo
+   fondoImages = new PImage[4]; // Inicializar el array de imágenes de fondo
   fondoImages[0] = loadImage("assets/collage_1.png");
   fondoImages[1] = loadImage("assets/collage_2.png");
   fondoImages[2] = loadImage("assets/collage_3.png");
@@ -35,51 +30,57 @@ void setup() {
   // Establecer el tamaño de las imágenes
   for (int i = 0; i < images.length; i++) {
     images[i].resize(250, 0); // Ajustar el ancho a 100 pixeles, manteniendo la proporción
-     video = new Movie(this, "assets/explosion.mp4");
-  video.loop();
   }
 
 
-  //Carga las imágenes de los personajes
+  // Carga las imágenes de los personajes
   personajeImg1 = loadImage("assets/maynez.png");
 
   personajeImg2 = loadImage("assets/sheinbaum.png");
 
   personajeImg3 = loadImage("assets/xochuikl.png");
 
-  //Crea los personajes en diferentes posiciones de la ventana
+  // Crea los personajes en diferentes posiciones de la ventana
   jugador1 = new Personaje(width/2, height/2);
   jugador2 = new Personaje(width/3, height/3);
   jugador3 = new Personaje(2*width/3, 2*height/3);
 }
 
 void draw() {
+  
+   //Mostrar las imágenes dispersas
+   
+  //if (movimientoActivo) {
+  //for (int i = 0; i < images.length; i++) {
+    //float x = random(width);
+    //float y = random(height);
+    //image(images[i], x, y); }
+    
+  int currentTime = millis();
+  if (currentTime - lastTime > changeInterval) {
+    fondoIndex = (fondoIndex + 1) % fondoImages.length;
+    lastTime = currentTime;
+  }
   background(fondoImages[fondoIndex]); // Establecer el fondo actual
 
 
-  //Mostrar las imágenes dispersas
-  if (movimientoActivo) {
+  // Mostrar las imágenes dispersas
   for (int i = 0; i < images.length; i++) {
     float x = random(width);
     float y = random(height);
     image(images[i], x, y);
-  }
-  if (isVideoPlaying) {
-    image(video, 0, 0, width, height);
-  } else {
-    background(0);
-  }
   }
 
   // Muestra a todos los personajes
   jugador1.mostrar1();
   jugador2.mostrar2();
   jugador3.mostrar3();
-}
+ }
 
-void keyPressed() {
-
-  if (key == 'C') {
+void keyPressed(){ 
+  
+  //Controla el movimiento de los collages de fondo
+  if (key == 'C'){
     fondoIndex = 0;
   } else if (key == 'V') {
     fondoIndex = 1;
@@ -89,11 +90,11 @@ void keyPressed() {
     fondoIndex = 3;
   }
   
-  if (key == 'Y') { // Tecla Y
-    movimientoActivo = !movimientoActivo; // Cambia el estado del movimiento
-  }
+ // if (key == 'Y') { // Tecla Y
+   // movimientoActivo = !movimientoActivo; // Cambia el estado del movimiento
+  //}
   
-  //Controla el movimiento del primer personaje utilizando las teclas de flecha
+  // Controla el movimiento del primer personaje utilizando las teclas de flecha
   if (keyCode == UP) {
     jugador1.mover(0, -5); // Mueve hacia arriba
   } else if (keyCode == DOWN) {
@@ -104,7 +105,7 @@ void keyPressed() {
     jugador1.mover(5, 0); // Mueve hacia la derecha
   }
 
-  //Controla el movimiento del segundo personaje utilizando las teclas WASD
+  // Controla el movimiento del segundo personaje utilizando las teclas WASD
   if (key == 'w' || key == 'W') {
     jugador2.mover(0, -5); // Mueve hacia arriba
   } else if (key == 's' || key == 'S') {
@@ -115,7 +116,7 @@ void keyPressed() {
     jugador2.mover(5, 0); // Mueve hacia la derecha
   }
 
-  //Controla el movimiento del tercer personaje utilizando las teclas IJKL
+  // Controla el movimiento del tercer personaje utilizando las teclas IJKL
   if (key == 'i' || key == 'I') {
     jugador3.mover(0, -5); // Mueve hacia arriba
   } else if (key == 'k' || key == 'K') {
@@ -125,18 +126,9 @@ void keyPressed() {
   } else if (key == 'l' || key == 'L') {
     jugador3.mover(5, 0); // Mueve hacia la derecha
   }
-  // Presiona la tecla 'p' para reproducir/pausar el video
-  if (key == 'p' || key == ' ') { //ESPACIO
-    if (isVideoPlaying) {
-      video.pause();
-    } else {
-      video.play();
-    }
-    isVideoPlaying = !isVideoPlaying;
-  }
 }
 
-//Clase para representar al personaje
+// Clase para representar al personaje
 class Personaje {
   float x, y; // Posición del personaje
 
@@ -187,7 +179,7 @@ class Personaje {
     image(personajeImg2, x, y-80, 170, 170);
   }
   void mostrar3() {//xochitl
-    //Cuerpo
+    // Cuerpo
     fill(0, 102, 255); // Color del cuerpo de xochitl
     rectMode(CENTER);
     rect(x, y + 30, 80, 110);
