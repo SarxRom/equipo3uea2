@@ -1,5 +1,7 @@
-import processing.video.*;
+import processing.serial.*;
 import processing.sound.*;
+
+Serial myPort; // Variable para la comunicación serial
 
 boolean movimientoActivo = false;
 PImage[] images;//cargar imagenes
@@ -15,16 +17,19 @@ Personaje jugador2; // Variable para almacenar al segundo personaje
 Personaje jugador3; // Variable para almacenar al tercer personaje
 SoundFile sound; // Variable para almacenar el archivo de sonido
 boolean soundPlaying = false; // Variable para rastrear el estado del sonido
-
-Movie myMovie; // Variable para almacenar el video
-boolean videoPlaying = false; // Variable para rastrear si el video está en reproducción
-
+PImage[] imagen = new PImage[20];
+int contador = 0;
+boolean activado = false;
+boolean secuenciaTerminada = false;
 
 
 void setup() {
   frameRate(10);
   fullScreen(); // Tamaño de la ventana
-  //noCursor();
+  noCursor();
+  
+   // Inicializa la comunicación serial
+  myPort = new Serial(this, Serial.list()[0], 9600);
  
    fondoImages = new PImage[4]; // Inicializar el array de imágenes de fondo
   fondoImages[0] = loadImage("assets/collage_1.png");
@@ -59,22 +64,14 @@ void setup() {
   // Cargar el archivo de sonido
   sound = new SoundFile(this, "assets/sound.wav");
 
-
-  // Cargar el video
-  myMovie = new Movie(this, "assets/Explosion.mp4");
-  myMovie.loop(); // Loop por si acaso, pero lo detenemos inmediatamente
-  myMovie.stop(); // Detenemos el loop inmediatamente
+for (int i = 0; i < 20; i++) {
+    imagen[i] = loadImage("assets/Explosion_" + i + ".jpg");
+    // Asegúrate de reemplazar "imagen_" con el prefijo de tus imágenes
+  }
 }
-
-
 void draw() {
   
-    if (videoPlaying) {
-    // Si el video está en reproducción, mostrar el video
-    image(myMovie, 0, 0, width, height);
-  } else {
-    // Si el video no está en reproducción, ejecutar el código normal
- 
+  
   background(fondoImages[fondoIndex]); // Establecer el fondo actual
 //Mostrar las imágenes dispersas
   if (movimientoActivo) {
@@ -91,8 +88,43 @@ void draw() {
   jugador1.mostrar1();
   jugador2.mostrar2();
   jugador3.mostrar3();
- }
- 
+
+if (activado && !secuenciaTerminada) {
+    // Muestra la imagen actual
+    image(imagen[contador],
+      width/2, height/2, width, height);
+    // Incrementa el contador para la siguiente imagen
+    contador = (contador + 1) % 20; // Asegúrate de cambiar este valor al número de imágenes que tengas
+
+    // Verifica si se han mostrado todas las imágenes
+    if (contador == 0) {
+      secuenciaTerminada = true;
+    }
+  } else if (secuenciaTerminada) {
+    // Pantalla negra después de que se muestren todas las imágenes
+    background(0);
+  }
+  
+  // Verifica si hay datos disponibles en el puerto serial
+  while (myPort.available() > 0) {
+    String inBuffer = myPort.readStringUntil('\n');
+    if (inBuffer != null) {
+      inBuffer = inBuffer.trim(); // Elimina caracteres de espacio en blanco
+      // Actúa según el comando recibido
+      if (inBuffer.equals("BUTTON1_PRESSED")) {
+        // Acción para BUTTON1_PRESSED (equivalente a la tecla 'Y')
+        movimientoActivo = !movimientoActivo;
+      } else if (inBuffer.equals("BUTTON2_PRESSED")) {
+        // Acción para BUTTON2_PRESSED (equivalente a la tecla 'H')
+        if (soundPlaying) {
+          sound.stop();
+        } else {
+          sound.play();
+        }
+        soundPlaying = !soundPlaying;
+      }
+    }
+  }
 }
 void keyPressed(){ 
   
@@ -119,12 +151,7 @@ void keyPressed(){
    if (key == 'Y'||key=='y') { // Tecla Y
     movimientoActivo = !movimientoActivo; // Cambia el estado del movimiento
   }
-    // Inicia la reproducción del video cuando se presiona la tecla de espacio
-  if (key == ' ') {
-    myMovie.play();
-    videoPlaying = true;
-  }
-
+  
   
  
   
@@ -160,15 +187,12 @@ void keyPressed(){
   } else if (key == 'l' || key == 'L') {
     jugador3.mover(5, 0); // Mueve hacia la derecha
   }
-}
-
-// Método para actualizar el frame del video
-void movieEvent(Movie m) {
-  m.read();
-  if (videoPlaying && !m.isPlaying()) {
-    exit(); // Terminar el programa cuando el video se haya terminado
+  if (key == ' ') {
+    activado = !activado; // Cambia el estado de activación al presionar la tecla " " (espaciado)
   }
 }
+
+
 
 // Clase para representar al personaje
 class Personaje {
