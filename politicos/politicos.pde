@@ -21,7 +21,12 @@ PImage[] imagen = new PImage[20];
 int contador = 0;
 boolean activado = false;
 boolean secuenciaTerminada = false;
+SoundFile sonido;
 
+SoundFile cand;
+boolean audioPlaying = false;
+float rectX = 0;
+float rectSpeed = 2;
 
 void setup() {
   frameRate(10);
@@ -63,6 +68,11 @@ void setup() {
   
   // Cargar el archivo de sonido
   sound = new SoundFile(this, "assets/sound.wav");
+  // Carga el archivo de audio
+  cand = new SoundFile(this, "assets/audio_mejorado.wav");
+
+  //Carga sonido de explosión
+  sonido = new SoundFile(this, "assets/explosion_son.wav");
 
 for (int i = 0; i < 20; i++) {
     imagen[i] = loadImage("assets/Explosion_" + i + ".jpg");
@@ -137,7 +147,17 @@ void keyPressed(){
     }
     soundPlaying = !soundPlaying;
   }
-  
+  if (key == 'g' || key == 'G') {
+    // Si el audio está reproduciéndose, detén la reproducción
+    if (audioPlaying) {
+      cand.stop();
+      audioPlaying = false;
+    } else {
+      // Si el audio no está reproduciéndose, inicia la reproducción
+      cand.play();
+      audioPlaying = true;
+    }
+  }
   //Controla el movimiento de los collages de fondo
   if (key == 'C'||key=='c'){
     fondoIndex = 0;
@@ -150,8 +170,9 @@ void keyPressed(){
   }
    if (key == 'Y'||key=='y') { // Tecla Y
     movimientoActivo = !movimientoActivo; // Cambia el estado del movimiento
-  }
   
+  }
+    
   
  
   
@@ -189,6 +210,9 @@ void keyPressed(){
   }
   if (key == ' ') {
     activado = !activado; // Cambia el estado de activación al presionar la tecla " " (espaciado)
+     sound.stop();
+    cand.stop();
+    sonido.play();
   }
 }
 
